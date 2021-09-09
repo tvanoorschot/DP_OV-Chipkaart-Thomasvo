@@ -8,7 +8,7 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     Connection connection;
 
-    public ReizigerDAOPsql(Connection connection) throws SQLException {
+    public ReizigerDAOPsql(Connection connection) {
         this.connection = connection;
     }
 

@@ -49,9 +49,8 @@ public class Main {
      *
      * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
      *
-     * @throws SQLException
      */
-    private static void testReizigerDAO(ReizigerDAO rdao) throws SQLException {
+    private static void testReizigerDAO(ReizigerDAO rdao) {
         System.out.println("\n---------- Test ReizigerDAO -------------");
 
         // Haal alle reizigers op uit de database
