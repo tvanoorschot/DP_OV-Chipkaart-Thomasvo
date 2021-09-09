@@ -1,6 +1,5 @@
 package com.chipkaart.domein.reiziger;
 
-import java.util.ArrayList;
 import java.sql.Date;
 
 public class Reiziger {
@@ -11,10 +10,10 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
 
-
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam , Date geboortedatum) {
         this.id = id;
         this.voorletters = voorletters;
+        if (tussenvoegsel == null) tussenvoegsel = "";
         this.tussenvoegsel = tussenvoegsel;
         this.achternaam = achternaam;
         this.geboortedatum = geboortedatum;
@@ -41,6 +40,7 @@ public class Reiziger {
     }
 
     public void setTussenvoegsel(String tussenvoegsel) {
+        if (tussenvoegsel == null) tussenvoegsel = "";
         this.tussenvoegsel = tussenvoegsel;
     }
 
@@ -60,11 +60,11 @@ public class Reiziger {
         this.geboortedatum = geboortedatum;
     }
 
+    /**
+     * Vraag de volledige naam op van de reiziger
+     */
     public String getNaam() {
-        String naam = voorletters + ".";
-        if (tussenvoegsel!=null) naam += " " + tussenvoegsel;
-        naam += " " + achternaam;
-        return naam;
+        return voorletters + ". " + tussenvoegsel + " " + achternaam;
     }
 
     @Override

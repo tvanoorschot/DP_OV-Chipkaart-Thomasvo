@@ -13,22 +13,35 @@ public class Main {
 
     private static Connection connection;
 
-    private static void getConnection() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:postgresql://localhost/ovchip?user=postgres&password=0000");
+    /**
+     * Deze methode maakt de connectie naar de database
+     *
+     * @throws SQLException
+     * @throws NullPointerException
+     */
+    private static void getConnection() throws SQLException, NullPointerException {
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost/ovchip?user=postgres&password=0000");
+        }
     }
 
+    /**
+     * Deze methode sluit de connectie met de database
+     *
+     * @throws SQLException
+     */
     private static void closeConnection() throws SQLException {
         connection.close();
     }
 
-
+    /**
+     * Main methode
+     */
     public static void main(String[] args) throws SQLException {
         getConnection();
         testReizigerDAO(new ReizigerDAOPsql(connection));
         closeConnection();
     }
-
-
 
 
     /**

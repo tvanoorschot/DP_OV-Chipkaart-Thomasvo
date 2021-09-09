@@ -12,18 +12,23 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         this.connection = connection;
     }
 
+    /**
+     * Deze methode slaat een reiziger op in de database.
+     */
     @Override
     public boolean save(Reiziger reiziger) {
         try {
 
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO reiziger VALUES (?, ?, ?, ?, ?)");
 
-            if(statement.executeUpdate("INSERT INTO reiziger VALUES (" +
-                    reiziger.getId() + ", '" +
-                    reiziger.getVoorletters() + "', '" +
-                    reiziger.getTussenvoegsel() + "', '" +
-                    reiziger.getAchternaam() + "', '" +
-                    reiziger.getGeboortedatum() + "')") != 0) {
+            statement.setInt(1, reiziger.getId());
+            statement.setString(2, reiziger.getVoorletters());
+            statement.setString(3, reiziger.getTussenvoegsel());
+            statement.setString(4, reiziger.getAchternaam());
+            statement.setDate(5, reiziger.getGeboortedatum());
+
+
+            if(statement.executeUpdate() != 0) {
                 return true;
             }
 
@@ -33,18 +38,22 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return false;
     }
 
+    /**
+     * Deze methode past een reiziger aan in de database.
+     */
     @Override
     public boolean update(Reiziger reiziger) {
         try {
 
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement("UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ? WHERE reiziger_id = ?");
 
-            if(statement.executeUpdate("UPDATE reiziger SET " +
-                    "voorletters = '" + reiziger.getVoorletters() + "', " +
-                    "tussenvoegsel = '" + reiziger.getTussenvoegsel() + "', " +
-                    "achternaam = '" + reiziger.getAchternaam() + "', " +
-                    "geboortedatum = '" + reiziger.getGeboortedatum() + "' " +
-                    "WHERE reiziger_id = '" + reiziger.getId() + "'") != 0){
+            statement.setString(1, reiziger.getVoorletters());
+            statement.setString(2, reiziger.getTussenvoegsel());
+            statement.setString(3, reiziger.getAchternaam());
+            statement.setDate(4, reiziger.getGeboortedatum());
+            statement.setInt(5, reiziger.getId());
+
+            if(statement.executeUpdate() != 0){
                 return true;
             }
 
@@ -54,13 +63,18 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return false;
     }
 
+    /**
+     * Deze methode verwijderd een reiziger uit de database.
+     */
     @Override
     public boolean delete(Reiziger reiziger) {
         try {
 
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
 
-            if(statement.executeUpdate("DELETE FROM reiziger WHERE reiziger_id = '" + reiziger.getId() + "'") != 0){
+            statement.setInt(1, reiziger.getId());
+
+            if(statement.executeUpdate() != 0){
                 return true;
             }
 
@@ -70,14 +84,19 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return false;
     }
 
+    /**
+     * Deze methode zoekt een reiziger op id uit de database.
+     */
     @Override
     public Reiziger findById(int id) {
         Reiziger reiziger = null;
         try {
 
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id = ?");
 
-            ResultSet result = statement.executeQuery("SELECT * FROM reiziger WHERE reiziger_id = '" + id + "'");
+            statement.setInt(1, id);
+
+            ResultSet result = statement.executeQuery();
 
             while (result.next()) {
 
@@ -98,14 +117,19 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return reiziger;
     }
 
+    /**
+     * Deze methode zoekt reizigers op geboortedatum uit de database.
+     */
     @Override
     public List<Reiziger> findByGbdatum(String datum) {
         List<Reiziger> reizigers = new ArrayList<>();
         try {
 
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM reiziger WHERE geboortedatum = ?");
 
-            ResultSet result = statement.executeQuery("SELECT * FROM reiziger WHERE geboortedatum = '" + datum + "'");
+            statement.setDate(1, java.sql.Date.valueOf(datum));
+
+            ResultSet result = statement.executeQuery();
 
             while (result.next()) {
 
@@ -126,14 +150,17 @@ public class ReizigerDAOPsql implements ReizigerDAO {
         return reizigers;
     }
 
+    /**
+     * Deze methode haalt alle reizigers op uit de database.
+     */
     @Override
     public List<Reiziger> findAll() {
         List<Reiziger> reizigers = new ArrayList<>();
         try {
 
-            Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM reiziger");
 
-            ResultSet result = statement.executeQuery("SELECT * FROM reiziger");
+            ResultSet result = statement.executeQuery();
 
             while (result.next()) {
 
