@@ -109,9 +109,7 @@ public class Main {
     }
 
     /**
-     * P2. Reiziger DAO: persistentie van een klasse
-     *
-     * Deze methode test de CRUD-functionaliteit van de Reiziger DAO
+     * Deze methode test de CRUD-functionaliteit van AdresDAO
      *
      */
     private static void testAdresDAO(AdresDAO adao , ReizigerDAO rdao) {
