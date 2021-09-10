@@ -1,5 +1,7 @@
 package com.chipkaart.domein.reiziger;
 
+import com.chipkaart.domein.adres.Adres;
+
 import java.sql.Date;
 
 public class Reiziger {
@@ -9,6 +11,7 @@ public class Reiziger {
     private String tussenvoegsel;
     private String achternaam;
     private Date geboortedatum;
+    private Adres adres;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam , Date geboortedatum) {
         this.id = id;
@@ -60,6 +63,14 @@ public class Reiziger {
         this.geboortedatum = geboortedatum;
     }
 
+    public Adres getAdres() {
+        return adres;
+    }
+
+    public void setAdres(Adres adres) {
+        this.adres = adres;
+    }
+
     /**
      * Vraag de volledige naam op van de reiziger
      */
@@ -69,12 +80,18 @@ public class Reiziger {
 
     @Override
     public String toString() {
+        String adresString = "";
+
+        if (this.adres != null) {
+            adresString = ", adres=" + adres.getPostcode() + ", " + adres.getHuisnummer();
+        }
+
         return "Reiziger{" +
                 "id=" + id +
                 ", voorletters='" + voorletters + '\'' +
                 ", tussenvoegsel='" + tussenvoegsel + '\'' +
                 ", achternaam='" + achternaam + '\'' +
                 ", geboortedatum=" + geboortedatum +
-                '}';
+                adresString + '}';
     }
 }
