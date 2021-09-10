@@ -9,8 +9,8 @@ import java.util.List;
 
 public class ReizigerDAOPsql implements ReizigerDAO {
 
-    Connection connection;
-    AdresDAO adao;
+    private Connection connection;
+    private AdresDAO adao;
 
     public ReizigerDAOPsql(Connection connection) {
         this.connection = connection;

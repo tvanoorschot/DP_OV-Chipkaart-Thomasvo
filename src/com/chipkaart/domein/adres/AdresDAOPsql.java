@@ -13,8 +13,8 @@ import java.util.List;
 
 public class AdresDAOPsql implements AdresDAO {
 
-    Connection connection;
-    ReizigerDAO rdao;
+    private Connection connection;
+    private ReizigerDAO rdao;
 
     public AdresDAOPsql(Connection connection) {
         this.connection = connection;
@@ -107,9 +107,7 @@ public class AdresDAOPsql implements AdresDAO {
 
             ResultSet result = statement.executeQuery();
 
-            // misschien overbodig
             while (result.next()) {
-            // ^^^^
                 adres = new Adres(
                         result.getInt("adres_id"),
                         result.getString("postcode"),
@@ -117,7 +115,6 @@ public class AdresDAOPsql implements AdresDAO {
                         result.getString("straat"),
                         result.getString("woonplaats"),
                         reiziger);
-
             }
 
             result.close();
