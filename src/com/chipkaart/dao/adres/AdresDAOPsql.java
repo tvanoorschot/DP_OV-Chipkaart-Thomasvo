@@ -1,9 +1,9 @@
-package com.chipkaart.domein.adres;
+package com.chipkaart.dao.adres;
 
-import com.chipkaart.domein.reiziger.Reiziger;
-import com.chipkaart.domein.reiziger.ReizigerDAO;
-import com.chipkaart.domein.reiziger.ReizigerDAOPsql;
-
+import com.chipkaart.dao.reiziger.ReizigerDAO;
+import com.chipkaart.dao.reiziger.ReizigerDAOPsql;
+import com.chipkaart.domein.Adres;
+import com.chipkaart.domein.Reiziger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +18,16 @@ public class AdresDAOPsql implements AdresDAO {
 
     public AdresDAOPsql(Connection connection) {
         this.connection = connection;
+    }
+
+    public AdresDAOPsql(Connection connection, ReizigerDAOPsql rdao) {
+        this.connection = connection;
+        rdao.setAdao(this);
+        this.rdao = rdao;
+    }
+
+    public void setRdao(ReizigerDAO rdao) {
+        this.rdao = rdao;
     }
 
     /**
@@ -130,7 +140,6 @@ public class AdresDAOPsql implements AdresDAO {
      */
     @Override
     public List<Adres> findAll() {
-        rdao = new ReizigerDAOPsql(connection);
 
         List<Adres> adressen = new ArrayList<>();
         try {

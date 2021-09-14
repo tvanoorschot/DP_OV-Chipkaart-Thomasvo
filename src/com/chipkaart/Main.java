@@ -1,11 +1,11 @@
 package com.chipkaart;
 
-import com.chipkaart.domein.adres.Adres;
-import com.chipkaart.domein.adres.AdresDAO;
-import com.chipkaart.domein.adres.AdresDAOPsql;
-import com.chipkaart.domein.reiziger.Reiziger;
-import com.chipkaart.domein.reiziger.ReizigerDAO;
-import com.chipkaart.domein.reiziger.ReizigerDAOPsql;
+import com.chipkaart.domein.Adres;
+import com.chipkaart.dao.adres.AdresDAO;
+import com.chipkaart.dao.adres.AdresDAOPsql;
+import com.chipkaart.domein.Reiziger;
+import com.chipkaart.dao.reiziger.ReizigerDAO;
+import com.chipkaart.dao.reiziger.ReizigerDAOPsql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -42,8 +42,13 @@ public class Main {
      */
     public static void main(String[] args) throws SQLException {
         getConnection();
-        testReizigerDAO(new ReizigerDAOPsql(connection));
-        testAdresDAO(new AdresDAOPsql(connection), new ReizigerDAOPsql(connection));
+
+        AdresDAO adao = new AdresDAOPsql(connection, new ReizigerDAOPsql(connection));
+        ReizigerDAO rdao = new ReizigerDAOPsql(connection, new AdresDAOPsql(connection));
+
+        testReizigerDAO(rdao);
+        testAdresDAO(adao, rdao);
+
         closeConnection();
     }
 
@@ -112,7 +117,7 @@ public class Main {
      * Deze methode test de CRUD-functionaliteit van AdresDAO
      *
      */
-    private static void testAdresDAO(AdresDAO adao , ReizigerDAO rdao) {
+    private static void testAdresDAO(AdresDAO adao, ReizigerDAO rdao) {
         System.out.println("\n---------- Test AdresDAO -------------");
 
         // Haal alle adressen op uit de database

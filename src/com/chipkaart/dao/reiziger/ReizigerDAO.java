@@ -1,4 +1,6 @@
-package com.chipkaart.domein.reiziger;
+package com.chipkaart.dao.reiziger;
+
+import com.chipkaart.domein.Reiziger;
 
 import java.util.List;
 

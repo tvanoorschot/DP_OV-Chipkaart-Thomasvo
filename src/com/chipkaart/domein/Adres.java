@@ -1,6 +1,4 @@
-package com.chipkaart.domein.adres;
-
-import com.chipkaart.domein.reiziger.Reiziger;
+package com.chipkaart.domein;
 
 public class Adres {
 

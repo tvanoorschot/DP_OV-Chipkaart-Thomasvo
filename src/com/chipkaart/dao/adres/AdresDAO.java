@@ -1,6 +1,8 @@
-package com.chipkaart.domein.adres;
+package com.chipkaart.dao.adres;
 
-import com.chipkaart.domein.reiziger.Reiziger;
+import com.chipkaart.domein.Reiziger;
+import com.chipkaart.domein.Adres;
+
 import java.util.List;
 
 public interface AdresDAO {

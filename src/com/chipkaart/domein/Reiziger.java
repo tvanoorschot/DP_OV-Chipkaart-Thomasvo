@@ -1,6 +1,4 @@
-package com.chipkaart.domein.reiziger;
-
-import com.chipkaart.domein.adres.Adres;
+package com.chipkaart.domein;
 
 import java.sql.Date;
 

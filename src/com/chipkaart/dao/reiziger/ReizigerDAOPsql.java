@@ -1,7 +1,8 @@
-package com.chipkaart.domein.reiziger;
+package com.chipkaart.dao.reiziger;
 
-import com.chipkaart.domein.adres.AdresDAO;
-import com.chipkaart.domein.adres.AdresDAOPsql;
+import com.chipkaart.dao.adres.AdresDAO;
+import com.chipkaart.dao.adres.AdresDAOPsql;
+import com.chipkaart.domein.Reiziger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +15,16 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     public ReizigerDAOPsql(Connection connection) {
         this.connection = connection;
+    }
+
+    public ReizigerDAOPsql(Connection connection, AdresDAOPsql adao) {
+        this.connection = connection;
+        adao.setRdao(this);
+        this.adao = adao;
+    }
+
+    public void setAdao(AdresDAO adao) {
+        this.adao = adao;
     }
 
     /**
@@ -32,7 +43,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             statement.setDate(5, reiziger.getGeboortedatum());
 
             if(statement.executeUpdate() != 0) {
-                return true;
+                if(reiziger.getAdres() == null) return true;
+                if (adao.save(reiziger.getAdres())) return true;
             }
 
         } catch (Exception exception) {
@@ -57,7 +69,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             statement.setInt(5, reiziger.getId());
 
             if(statement.executeUpdate() != 0){
-                return true;
+                if(reiziger.getAdres() == null) return true;
+                if (adao.update(reiziger.getAdres())) return true;
             }
 
         } catch (Exception exception) {
@@ -71,7 +84,6 @@ public class ReizigerDAOPsql implements ReizigerDAO {
      */
     @Override
     public boolean delete(Reiziger reiziger) {
-        adao = new AdresDAOPsql(connection);
 
         if(reiziger.getAdres() != null) {
             adao.delete(reiziger.getAdres());
@@ -98,7 +110,6 @@ public class ReizigerDAOPsql implements ReizigerDAO {
      */
     @Override
     public Reiziger findById(int id) {
-        adao = new AdresDAOPsql(connection);
 
         Reiziger reiziger = null;
         try {
@@ -135,7 +146,6 @@ public class ReizigerDAOPsql implements ReizigerDAO {
      */
     @Override
     public List<Reiziger> findByGbdatum(String datum) {
-        adao = new AdresDAOPsql(connection);
 
         List<Reiziger> reizigers = new ArrayList<>();
         try {
@@ -172,7 +182,6 @@ public class ReizigerDAOPsql implements ReizigerDAO {
      */
     @Override
     public List<Reiziger> findAll() {
-        adao = new AdresDAOPsql(connection);
 
         List<Reiziger> reizigers = new ArrayList<>();
         try {
