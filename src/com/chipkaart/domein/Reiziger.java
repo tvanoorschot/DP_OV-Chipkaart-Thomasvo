@@ -1,6 +1,7 @@
 package com.chipkaart.domein;
 
 import java.sql.Date;
+import java.util.List;
 
 public class Reiziger {
 
@@ -10,6 +11,7 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private Adres adres;
+    private List<OVChipkaart> ovChipkaarten;
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam , Date geboortedatum) {
         this.id = id;
@@ -69,10 +71,19 @@ public class Reiziger {
         this.adres = adres;
     }
 
+    public List<OVChipkaart> getOvChipkaarten() {
+        return ovChipkaarten;
+    }
+
+    public void setOvChipkaarten(List<OVChipkaart> ovChipkaarten) {
+        this.ovChipkaarten = ovChipkaarten;
+    }
+
     /**
      * Vraag de volledige naam op van de reiziger
      */
     public String getNaam() {
+        if(tussenvoegsel.equals("")) return voorletters + ". " + achternaam;
         return voorletters + ". " + tussenvoegsel + " " + achternaam;
     }
 
@@ -89,7 +100,8 @@ public class Reiziger {
                 ", voorletters='" + voorletters + '\'' +
                 ", tussenvoegsel='" + tussenvoegsel + '\'' +
                 ", achternaam='" + achternaam + '\'' +
-                ", geboortedatum=" + geboortedatum +
-                adresString + '}';
+                ", geboortedatum=" + geboortedatum + adresString +
+                ", ovChipkaarten=" + ovChipkaarten +
+                '}';
     }
 }

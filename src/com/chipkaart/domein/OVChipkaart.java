@@ -6,11 +6,11 @@ public class OVChipkaart {
 
     private int kaartNummer;
     private Date geldigTot;
-    private String klasse;
+    private int klasse;
     private double saldo;
     private Reiziger reiziger;
 
-    public OVChipkaart(int kaartNummer, Date geldigTot, String klasse, double saldo, Reiziger reiziger) {
+    public OVChipkaart(int kaartNummer, Date geldigTot, int klasse, double saldo, Reiziger reiziger) {
         this.kaartNummer = kaartNummer;
         this.geldigTot = geldigTot;
         this.klasse = klasse;
@@ -34,11 +34,11 @@ public class OVChipkaart {
         this.geldigTot = geldigTot;
     }
 
-    public String getKlasse() {
+    public int getKlasse() {
         return klasse;
     }
 
-    public void setKlasse(String klasse) {
+    public void setKlasse(int klasse) {
         this.klasse = klasse;
     }
 

@@ -5,6 +5,7 @@ import com.chipkaart.dao.ovchipkaart.OVChipkaartDAOPsql;
 import com.chipkaart.domein.Adres;
 import com.chipkaart.dao.adres.AdresDAO;
 import com.chipkaart.dao.adres.AdresDAOPsql;
+import com.chipkaart.domein.OVChipkaart;
 import com.chipkaart.domein.Reiziger;
 import com.chipkaart.dao.reiziger.ReizigerDAO;
 import com.chipkaart.dao.reiziger.ReizigerDAOPsql;
@@ -45,12 +46,13 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         getConnection();
 
+        ReizigerDAO rdao = new ReizigerDAOPsql(connection, new AdresDAOPsql(connection), new OVChipkaartDAOPsql(connection));
         AdresDAO adao = new AdresDAOPsql(connection, new ReizigerDAOPsql(connection, new OVChipkaartDAOPsql(connection)));
-        ReizigerDAO rdao = new ReizigerDAOPsql(connection, new AdresDAOPsql(connection));
         OVChipkaartDAO odao = new OVChipkaartDAOPsql(connection, new ReizigerDAOPsql(connection, new AdresDAOPsql(connection)));
 
         testReizigerDAO(rdao);
         testAdresDAO(adao, rdao);
+        testOVChipkaartDAO(odao, rdao);
 
         closeConnection();
     }
@@ -161,6 +163,54 @@ public class Main {
         adao.delete(a);
         adressen = adao.findAll();
         System.out.println(adressen.size() + " adressen\n");
+
+    }
+
+    /**
+     * Deze methode test de CRUD-functionaliteit van OVChipkaartDAO
+     *
+     */
+    private static void testOVChipkaartDAO(OVChipkaartDAO odao, ReizigerDAO rdao) {
+        System.out.println("\n---------- Test OVChipkaartDAO -------------");
+
+        // Haal alle adressen op uit de database
+        List<OVChipkaart> ovChipkaartList = odao.findAll();
+        System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende ov-chipkaarten:");
+        for (OVChipkaart o : ovChipkaartList) {
+            System.out.println(o);
+        }
+        System.out.println();
+
+        // Voeg een nieuwe ov-chipkaart aan de reiziger toe in de database
+        System.out.println("[Test] Reiziger voor toevoeging ov-chipkaart:");
+        System.out.println(rdao.findById(1));
+        OVChipkaart o = new OVChipkaart(18329, java.sql.Date.valueOf("2017-03-14"), 1, 25.50 , rdao.findById(1));
+        odao.save(o);
+        System.out.println("[Test] Reiziger na toevoeging ov-chipkaart:");
+        System.out.println(rdao.findById(1));
+        System.out.println();
+
+        // Verander de ov-chipkaart in de database
+        System.out.println("[Test] OV-Chipkaart voor update:");
+        System.out.println(o);
+        o.setKlasse(2);
+        o.setSaldo(135.50);
+        odao.update(o);
+        System.out.println("[Test] OV-Chipkaart na update:");
+        System.out.println(o);
+        System.out.println();
+
+        // Haal ov-chipkaarten van reiziger op uit de database
+        System.out.println("[Test] OV-Chipkaarten van reiziger " + rdao.findById(4).getNaam() + ":");
+        System.out.println(odao.findByReiziger(rdao.findById(4)));
+        System.out.println();
+
+        // Verwijderd het nieuwe adres in de database
+        ovChipkaartList = odao.findAll();
+        System.out.print("[Test] Eerst " + ovChipkaartList.size() + " ov-chipkaarten, na OVChipkaartDAO.delete() ");
+        odao.delete(o);
+        ovChipkaartList = odao.findAll();
+        System.out.println(ovChipkaartList.size() + " ov-chipkaarten\n");
 
     }
 }
