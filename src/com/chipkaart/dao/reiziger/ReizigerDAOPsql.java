@@ -2,6 +2,8 @@ package com.chipkaart.dao.reiziger;
 
 import com.chipkaart.dao.adres.AdresDAO;
 import com.chipkaart.dao.adres.AdresDAOPsql;
+import com.chipkaart.dao.ovchipkaart.OVChipkaartDAO;
+import com.chipkaart.dao.ovchipkaart.OVChipkaartDAOPsql;
 import com.chipkaart.domein.Reiziger;
 
 import java.sql.*;
@@ -12,19 +14,30 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
     private Connection connection;
     private AdresDAO adao;
+    private OVChipkaartDAO odao;
 
     public ReizigerDAOPsql(Connection connection) {
         this.connection = connection;
     }
 
     public ReizigerDAOPsql(Connection connection, AdresDAOPsql adao) {
-        this.connection = connection;
+        this(connection);
         adao.setRdao(this);
         this.adao = adao;
     }
 
+    public ReizigerDAOPsql(Connection connection, OVChipkaartDAOPsql odao) {
+        this(connection);
+        odao.setRdao(this);
+        this.odao = odao;
+    }
+
     public void setAdao(AdresDAO adao) {
         this.adao = adao;
+    }
+
+    public void setOdao(OVChipkaartDAO odao) {
+        this.odao = odao;
     }
 
     /**
@@ -70,7 +83,8 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             if(statement.executeUpdate() != 0){
                 if(reiziger.getAdres() == null) return true;
-                if (adao.update(reiziger.getAdres())) return true;
+                if (adao.update(reiziger.getAdres())) return true; // Probeer eerst
+                if (adao.save(reiziger.getAdres())) return true; // Anders
             }
 
         } catch (Exception exception) {

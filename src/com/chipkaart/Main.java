@@ -1,5 +1,7 @@
 package com.chipkaart;
 
+import com.chipkaart.dao.ovchipkaart.OVChipkaartDAO;
+import com.chipkaart.dao.ovchipkaart.OVChipkaartDAOPsql;
 import com.chipkaart.domein.Adres;
 import com.chipkaart.dao.adres.AdresDAO;
 import com.chipkaart.dao.adres.AdresDAOPsql;
@@ -43,8 +45,9 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         getConnection();
 
-        AdresDAO adao = new AdresDAOPsql(connection, new ReizigerDAOPsql(connection));
+        AdresDAO adao = new AdresDAOPsql(connection, new ReizigerDAOPsql(connection, new OVChipkaartDAOPsql(connection)));
         ReizigerDAO rdao = new ReizigerDAOPsql(connection, new AdresDAOPsql(connection));
+        OVChipkaartDAO odao = new OVChipkaartDAOPsql(connection, new ReizigerDAOPsql(connection, new AdresDAOPsql(connection)));
 
         testReizigerDAO(rdao);
         testAdresDAO(adao, rdao);
