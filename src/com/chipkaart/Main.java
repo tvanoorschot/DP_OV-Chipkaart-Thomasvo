@@ -2,10 +2,13 @@ package com.chipkaart;
 
 import com.chipkaart.dao.ovchipkaart.OVChipkaartDAO;
 import com.chipkaart.dao.ovchipkaart.OVChipkaartDAOPsql;
+import com.chipkaart.dao.product.ProductDAO;
+import com.chipkaart.dao.product.ProductDAOPsql;
 import com.chipkaart.domein.Adres;
 import com.chipkaart.dao.adres.AdresDAO;
 import com.chipkaart.dao.adres.AdresDAOPsql;
 import com.chipkaart.domein.OVChipkaart;
+import com.chipkaart.domein.Product;
 import com.chipkaart.domein.Reiziger;
 import com.chipkaart.dao.reiziger.ReizigerDAO;
 import com.chipkaart.dao.reiziger.ReizigerDAOPsql;
@@ -46,13 +49,15 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         getConnection();
 
-        ReizigerDAO rdao = new ReizigerDAOPsql(connection, new AdresDAOPsql(connection), new OVChipkaartDAOPsql(connection));
-        AdresDAO adao = new AdresDAOPsql(connection, new ReizigerDAOPsql(connection, new OVChipkaartDAOPsql(connection)));
-        OVChipkaartDAO odao = new OVChipkaartDAOPsql(connection, new ReizigerDAOPsql(connection, new AdresDAOPsql(connection)));
+        ReizigerDAOPsql rdao = new ReizigerDAOPsql(connection, new AdresDAOPsql(connection), new OVChipkaartDAOPsql(connection, new ReizigerDAOPsql(connection, new AdresDAOPsql(connection)), new ProductDAOPsql(connection)));
+        OVChipkaartDAOPsql odao = new OVChipkaartDAOPsql(connection, rdao, new ProductDAOPsql(connection));
+        ProductDAOPsql pdao = new ProductDAOPsql(connection, odao, rdao);
+        AdresDAOPsql adao = new AdresDAOPsql(connection, rdao);
 
         testReizigerDAO(rdao);
         testAdresDAO(adao, rdao);
         testOVChipkaartDAO(odao, rdao);
+        testProductDAO(pdao, rdao , odao);
 
         closeConnection();
     }
@@ -173,7 +178,7 @@ public class Main {
     private static void testOVChipkaartDAO(OVChipkaartDAO odao, ReizigerDAO rdao) {
         System.out.println("\n---------- Test OVChipkaartDAO -------------");
 
-        // Haal alle adressen op uit de database
+        // Haal alle ov-chipkaarten op uit de database
         List<OVChipkaart> ovChipkaartList = odao.findAll();
         System.out.println("[Test] OVChipkaartDAO.findAll() geeft de volgende ov-chipkaarten:");
         for (OVChipkaart o : ovChipkaartList) {
@@ -205,12 +210,72 @@ public class Main {
         System.out.println(odao.findByReiziger(rdao.findById(4)));
         System.out.println();
 
-        // Verwijderd het nieuwe adres in de database
+        // Verwijderd de nieuwe ov-chipkaart in de database
         ovChipkaartList = odao.findAll();
         System.out.print("[Test] Eerst " + ovChipkaartList.size() + " ov-chipkaarten, na OVChipkaartDAO.delete() ");
         odao.delete(o);
         ovChipkaartList = odao.findAll();
         System.out.println(ovChipkaartList.size() + " ov-chipkaarten\n");
+
+    }
+
+    /**
+     * Deze methode test de CRUD-functionaliteit van ProductDAO
+     *
+     */
+    private static void testProductDAO(ProductDAO pdao, ReizigerDAO rdao, OVChipkaartDAO odao) {
+        System.out.println("\n---------- Test ProductDAO -------------");
+
+        // Haal alle producten op uit de database
+        List<Product> productList = pdao.findAll();
+        System.out.println("[Test] ProductDAO.findAll() geeft de volgende producten:");
+        for (Product p : productList) {
+            System.out.println(p);
+        }
+        System.out.println();
+
+        System.out.println("[Test] ProductDAO.findAll() na toevoeging Product:");
+        Product product = new Product(7,"Test Naam", "Test Beschr",69);
+        pdao.save(product);
+        productList = pdao.findAll();
+        for (Product p : productList) {
+            System.out.println(p);
+        }
+        System.out.println();
+
+        System.out.println("[Test] ProductDAO.findAll() na verwijdering Product:");
+        pdao.delete(product);
+        productList = pdao.findAll();
+        for (Product p : productList) {
+            System.out.println(p);
+        }
+        System.out.println();
+
+        // Voeg een nieuwe product aan ov-chipkaart toe in de database
+        OVChipkaart o = odao.findByReiziger(rdao.findById(5)).get(0);
+        Product p = pdao.findAll().get(5);
+
+        System.out.println("[Test] Ov-Chipkaart voor toevoeging Product:");
+        System.out.println(o);
+
+        System.out.println("[Test] Ov-Chipkaart na toevoeging Product:");
+        o.addProduct(p);
+        odao.update(o);
+        System.out.println(o);
+        System.out.println();
+
+        // Verwijder het product van de ov-chipkaart in de database
+        System.out.println("[Test] OV-Chipkaart voor verwijdering product:");
+        System.out.println(o);
+
+        System.out.println("[Test] OV-Chipkaart na verwijdering product:");
+        o.removeProduct(p);
+        pdao.update(p);
+        odao.update(o);
+        System.out.println(o);
+        System.out.println();
+
+//
 
     }
 }
