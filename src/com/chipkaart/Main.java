@@ -270,7 +270,6 @@ public class Main {
 
         System.out.println("[Test] OV-Chipkaart na verwijdering product:");
         o.removeProduct(p);
-        pdao.update(p);
         odao.update(o);
         System.out.println(o);
         System.out.println();

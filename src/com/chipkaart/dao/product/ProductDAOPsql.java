@@ -75,11 +75,10 @@ public class ProductDAOPsql implements ProductDAO {
             if (statement.executeUpdate() != 0) {
                 if (product.getOvChipkaarten() != null) {
                     product.getOvChipkaarten().forEach(ovChipkaart -> {
-                        if (!odao.findByProduct(product).contains(ovChipkaart)) {
-                            if(!deleteOvChipkaartProduct(ovChipkaart, product)) {
-                                addOvChipkaartProduct(ovChipkaart, product);
-                            }
-                        }
+                        if (odao.findByProduct(product).contains(ovChipkaart))
+                            updateOvChipkaartProduct(ovChipkaart, product);
+                        else
+                            deleteOvChipkaartProduct(ovChipkaart, product);
                     });
                 }
                 return true;
@@ -200,6 +199,31 @@ public class ProductDAOPsql implements ProductDAO {
 
             if (statement.executeUpdate() != 0) {
                 return true;
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Deze methode past de koppeling tussen product en ov-chipkaart aan in de database.
+     */
+    private boolean updateOvChipkaartProduct(OVChipkaart ovChipkaart, Product product) {
+        try {
+
+            PreparedStatement statement = connection.prepareStatement("UPDATE ov_chipkaart_product SET last_update = ?, status = ? WHERE product_nummer = ? AND kaart_nummer = ?");
+
+            statement.setDate(1, new java.sql.Date(System.currentTimeMillis()));
+            statement.setString(2, "Test");
+            statement.setInt(3, product.getProductNummer());
+            statement.setInt(4, ovChipkaart.getKaartNummer());
+
+            if (statement.executeUpdate() != 0) {
+                return true;
+            } else {
+                if(addOvChipkaartProduct(ovChipkaart, product)) return true;
             }
 
         } catch (Exception exception) {
